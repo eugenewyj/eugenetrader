@@ -8,6 +8,10 @@ import backtrader as bt
 from backtrader.functions import If
 
 class TestStrategy(bt.Strategy):
+    params = (
+        ('exitbars', 5),
+        ('maperiod', 15),
+    )
 
     def log(self, txt, dt=None):
         ''' Logging function for this strategy'''
@@ -21,6 +25,8 @@ class TestStrategy(bt.Strategy):
         self.order = None
         self.buyprice = None
         self.buycomm = None
+
+        self.sma = bt.indicators.SMA(self.datas[0], period=self.params.maperiod)
 
     
     def notify_order(self, order):
@@ -55,14 +61,20 @@ class TestStrategy(bt.Strategy):
             return
 
         if not self.position:
-            if self.dataclose[0] < self.dataclose[-1]:
-                if self.dataclose[-1] < self.dataclose[-2]:
-                    self.log('BUY CREATE %.2f' % self.dataclose[0])
-                    self.order = self.buy()
+            # if self.dataclose[0] < self.dataclose[-1]:
+            #     if self.dataclose[-1] < self.dataclose[-2]:
+            #         self.log('BUY CREATE %.2f' % self.dataclose[0])
+            #         self.order = self.buy()
+            if self.dataclose[0] > self.sma[0]:
+                self.log('BUY CREATE, %.2f' % self.dataclose[0])
+                self.order = self.buy()
         else:
-            if len(self) >= (self.bar_executed + 5):
-                 self.log('SELL CREATE, %.2f' % self.dataclose[0])
-                 self.order = self.sell()
+            # if len(self) >= (self.bar_executed + self.params.exitbars):
+            #      self.log('SELL CREATE, %.2f' % self.dataclose[0])
+            #      self.order = self.sell()
+            if self.dataclose[0] < self.sma[0]:
+                self.log('SELL CREATE, %.2f' % self.dataclose[0])
+                self.order = self.sell()
 
 
 
@@ -90,6 +102,8 @@ if __name__ == '__main__':
 
     cerebro._broker.set_cash(100000.00)
 
+    cerebro.addsizer(bt.sizers.FixedSize, stake=10)
+
     cerebro._broker.setcommission(0.001)
 
     print('Starting Protfolio Value: %.2f' % cerebro._broker.get_value())
@@ -97,3 +111,5 @@ if __name__ == '__main__':
     cerebro.run()
 
     print('Final Portfolio Value: %.2f' % cerebro._broker.get_value())
+
+    cerebro.plot()
