@@ -84,17 +84,24 @@ if __name__ == '__main__':
 
     cerebro.addstrategy(TestStrategy)
 
-    modpath = os.path.dirname(os.path.abspath(sys.argv[0]))
-    print(modpath)
-    datapath = os.path.join(modpath, '../backtrader/datas/orcl-1995-2014.txt')
-    print(datapath)
+    # modpath = os.path.dirname(os.path.abspath(sys.argv[0]))
+    # print(modpath)
+    # datapath = os.path.join(modpath, '../backtrader/datas/orcl-1995-2014.txt')
+    # print(datapath)
     # datapath = os.path.realpath(datapath)
     # print(datapath)
 
-    data = bt.feeds.YahooFinanceCSVData(
-        dataname=datapath,
-        fromdate=datetime.datetime(2000, 1, 1),
-        todate=datetime.datetime(2000, 12, 31),
+    # data = bt.feeds.YahooFinanceCSVData(
+    #     dataname=datapath,
+    #     fromdate=datetime.datetime(2000, 1, 1),
+    #     todate=datetime.datetime(2000, 12, 31),
+    #     reversed=False
+    # )
+
+    data = bt.feeds.YahooFinanceData(
+        dataname='SQ',
+        fromdate=datetime.datetime(2016, 1, 1),
+        todate=datetime.datetime(2021, 6, 3),
         reversed=False
     )
 
