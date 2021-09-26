@@ -12,6 +12,7 @@ import sqlite3 as sqlite
 logging.basicConfig(
     format='%(levelname)s: %(message)s',
     level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 con = sqlite.connect('../stock_db/stock_us.db')
 
@@ -38,7 +39,7 @@ def maintain_db_schema():
     '''
     cur.execute(create_stock_list)
     con.commit()
-    logging.info("维护数据库表[stock_list]")
+    logger.info("维护数据库表[stock_list]")
 
 
 if __name__ == '__main__':
