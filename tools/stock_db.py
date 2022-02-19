@@ -8,6 +8,8 @@
 ###############################################################################
 import logging
 import sqlite3 as sqlite
+import requests
+import json
 
 logging.basicConfig(
     format='%(levelname)s: %(message)s',
@@ -41,6 +43,19 @@ def maintain_db_schema():
     con.commit()
     logger.info("维护数据库表[stock_list]")
 
+def load_nasdaq_data():
+    '''从纳斯达克网站获取股票列表
+    '''
+    stocks = []
+    with open('../stock_db/stocks_20210914.json', 'r') as f:
+        data = json.load(f)
+        for row in data['data']['rows']:
+            stocks.append((row['symbol'], row['name'], row['lastsale'].replace('$', ''), row['netchange'], row['pctchange'].replace('%', ''), row['marketCap'], row['country'], row['ipoyear'], row['volume'], row['sector'], row['industry'], row['url']))
+    print(stocks)
+    con.executemany("insert into stock_list(symbol, name, last_sale, net_change, pct_change, market_cap, country, ipo_year, volume, sector, industry, url) values (?,?,?,?,?,?,?,?,?,?,?,?)", stocks)
+    con.commit()
+    
 
 if __name__ == '__main__':
-    maintain_db_schema()
+    # maintain_db_schema()
+    load_nasdaq_data()
