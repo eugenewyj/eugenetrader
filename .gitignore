@@ -130,3 +130,7 @@ dmypy.json
 
 
 .vscode
+
+# db&security
+stock_db/tiger_db
+security.yaml
